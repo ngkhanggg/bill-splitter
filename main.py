@@ -49,7 +49,21 @@ def create_combinations(times):
     return combinations
 
 
-@measure_execution_time
+"""
+@param interval1
+@param interval2
+This function checks if interval1 is within interval2
+"""
+def is_within_interval(interval, player_interval):
+    start, end = interval
+    player_start, player_end = player_interval
+    
+    start_is_within_interval = start <= player_start <= end
+    end_is_within_interval = start <= player_end <= end
+    
+    return start_is_within_interval or end_is_within_interval
+
+
 def main(cost_per_hour, file_name):
     log = get_log(file_name)
     print(f"log\n{log}")
