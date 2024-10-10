@@ -40,8 +40,23 @@ def create_combinations(times):
 
 
 """
-@param interval1
-@param interval2
+This function checks if interval1 is greater than interval2
+"""
+def _compare_intervals(interval1, interval2):
+    if interval1[0] < interval2[0]:
+        return -1
+    elif interval1[0] > interval2[0]:
+        return 1
+    else:
+        if interval1[1] < interval2[1]:
+            return -1
+        elif interval1[1] > interval2[1]:
+            return 1
+        else:
+            return 0
+
+
+"""
 This function checks if interval1 is within interval2
 """
 def is_within_interval(interval, player_interval):
