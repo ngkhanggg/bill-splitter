@@ -63,8 +63,11 @@ def is_within_interval(interval, player_interval):
     start, end = interval
     player_start, player_end = player_interval
     
-    start_is_within_interval = start <= player_start <= end
-    end_is_within_interval = start <= player_end <= end
+    # start_is_within_interval = start <= player_start < end
+    # end_is_within_interval = start < player_end =< end
+    
+    start_is_within_interval = (_compare_intervals(player_start, start) in (0, 1)) and (_compare_intervals(end, player_start) == 1)
+    end_is_within_interval = (_compare_intervals(player_end, start) == 1) and (_compare_intervals(end, player_end) in (0, 1))
     
     return start_is_within_interval or end_is_within_interval
 
@@ -92,16 +95,14 @@ def main(cost_per_hour, file_name):
     list_players = {player: 0.0 for player in log}
     
     for combination in combinations:
-        active_players = [player for player, interval in new_log.items() if is_within_interval(combination, interval)]
+        active_players = [player for player, interval in new_log.items() if is_within_interval(combination, interval) or is_within_interval(interval, combination)]
+
         if active_players:
             elapsed_time = calculate_elapsed_time(combination[0], combination[1])
-            split_time = elapsed_time / len(active_players)
-            
+            split_time = elapsed_time * cost_per_hour / len(active_players)
+
             for player in active_players:
-                list_players[player] += split_time
-    
-    for player in list_players:
-        list_players[player] *= cost_per_hour
+                list_players[player] = int(list_players[player] + split_time)
     
     print(list_players)
 
