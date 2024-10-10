@@ -64,6 +64,16 @@ def is_within_interval(interval, player_interval):
     return start_is_within_interval or end_is_within_interval
 
 
+def calculate_elapsed_time(time1, time2):
+    h1, m1 = time1
+    h2,m2 = time2
+    m3 = m2-m1 if m2 >= m1 else m2+60-m1
+    h3 = h2-h1 if m2 >= m1 else h2-h1-1
+    elapsed = (h3 * 60 + m3) / 60
+    elapsed = round(elapsed, 3)
+    return elapsed
+
+
 def main(cost_per_hour, file_name):
     log = get_log(file_name)
     print(f"log\n{log}")
