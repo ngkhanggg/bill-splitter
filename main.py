@@ -6,7 +6,7 @@ def get_log(filename):
             if line == '':
                 continue
             player_name, start_time, end_time = line.split(',')
-            log.update({player_name: (start_time, end_time)})
+            log[player_name] = (start_time, end_time)
     return log
 
 
@@ -15,38 +15,28 @@ def transform_log(log):
     for k, v in log.items():
         start_time_h, start_time_m = map(int, v[0].split(':'))
         end_time_h, end_time_m = map(int, v[1].split(':'))
-        end_time_h += (24 if end_time_h < start_time_h else 0)
-        new_log.update({k: [(start_time_h, start_time_m), (end_time_h, end_time_m)]})
+        if end_time_h < start_time_h:
+            end_time_h += 24  # Handle overnight cases
+        new_log[k] = [(start_time_h, start_time_m), (end_time_h, end_time_m)]
     return new_log
 
 
 def sort_times(log):
-    sorted_start_times = dict(sorted(log.items(), key=lambda x: x[1][0]))
-    sorted_end_times = dict(sorted(log.items(), key=lambda x: x[1][1]))
+    sorted_start_times = dict(sorted(log.items(), key=lambda x: x[1][0]))  # Sort by start time
+    sorted_end_times = dict(sorted(log.items(), key=lambda x: x[1][1]))  # Sort by end time
     return sorted_start_times, sorted_end_times
 
 
 def get_unique_times(times, index):
-    unique_times = []
-    for v in times.values():
-        if v[index] not in unique_times:
-            unique_times.append(v[index])
-    return unique_times
+    return sorted(set(v[index] for v in times.values()))
 
 
 def merge(list1, list2):
-    new_list = list1 + list2
-    sorted_new_list = sorted(new_list, key=lambda x: (x[0], x[1]))
-    return sorted_new_list
+    return sorted(set(list1 + list2), key=lambda x: (x[0], x[1]))
 
 
 def create_combinations(times):
-    combinations = []
-    for i in range(len(times) - 1):
-        if times[i] == times[i + 1]:
-            continue
-        combinations.append([times[i], times[i + 1]])
-    return combinations
+    return [[times[i], times[i + 1]] for i in range(len(times) - 1) if times[i] != times[i + 1]]
 
 
 """
@@ -67,11 +57,8 @@ def is_within_interval(interval, player_interval):
 def calculate_elapsed_time(time1, time2):
     h1, m1 = time1
     h2,m2 = time2
-    m3 = m2-m1 if m2 >= m1 else m2+60-m1
-    h3 = h2-h1 if m2 >= m1 else h2-h1-1
-    elapsed = (h3 * 60 + m3) / 60
-    elapsed = round(elapsed, 3)
-    return elapsed
+    h3, m3 = (h2 - h1, m2 - m1) if m2 >= m1 else (h2 - h1 - 1, m2 + 60 - m1)
+    return round((h3 * 60 + m3) / 60, 3)
 
 
 def main(cost_per_hour, file_name):
