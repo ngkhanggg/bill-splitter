@@ -50,9 +50,28 @@ def get_unique_times(times, index):
     return unique_times
 
 
+def merge(list1, list2):
+    new_list = list1 + list2
+    sorted_new_list = sorted(new_list, key=lambda x: (x[0], x[1]))
+    return sorted_new_list
+
+
+def create_combinations(times):
+    combinations = []
+    for i in range(len(times) - 2):
+        if times[i] == times[i + 1]:
+            continue
+        combinations.append([times[i], times[i + 1]])
+    return combinations
+
+
+@measure_execution_time
 def main(cost_per_hour, file_name):
     log = get_log(file_name)
+    print(f"log\n{log}")
+    
     new_log = transform_log(log)
+    print(f"new_log {new_log}")
     
     sorted_start_times, sorted_end_times = sort_times(new_log)
     print(f"sorted_start_times\n{sorted_start_times}")
@@ -61,6 +80,12 @@ def main(cost_per_hour, file_name):
     unique_start_times, unique_end_times = get_unique_times(sorted_start_times, 0), get_unique_times(sorted_end_times, 1)
     print(f"unique_start_times\n{unique_start_times}")
     print(f"unique_end_times\n{unique_end_times}")
+    
+    merged_list = merge(unique_start_times, unique_end_times)
+    print(f"merged_list\n{merged_list}")
+    
+    combinations = create_combinations(merged_list)
+    print(f"combinations\n{combinations}")
 
 
 if __name__ == '__main__':
