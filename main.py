@@ -42,7 +42,7 @@ def merge(list1, list2):
 
 def create_combinations(times):
     combinations = []
-    for i in range(len(times) - 2):
+    for i in range(len(times) - 1):
         if times[i] == times[i + 1]:
             continue
         combinations.append([times[i], times[i + 1]])
