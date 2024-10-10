@@ -1,3 +1,19 @@
+import time
+
+
+def measure_execution_time(func):
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        end_time = time.time()
+        
+        execution_time_ms = (end_time - start_time) * 1_000
+        print(f"The function {func.__name__} took {execution_time_ms:.6f} ms to execute.")
+        
+        return result
+    return wrapper
+
+
 def get_log(filename):
     log = {}
     with open(filename, 'r') as file:
